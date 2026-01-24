@@ -224,7 +224,7 @@ h1 {
         -webkit-user-select: none;
         user-select: none;
         touch-action: none;
-        width: calc(50%-10px) !important;
+        width: 47% !important;
         height: auto !important;
         aspect-ratio: 1/1;
         min-height: auto !important;
