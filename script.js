@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 'd-tier', label: 'D', colorClass: 'tier-d', name: 'D' }
     ];
 
+
     // Immagini
     const imgPath = "images/";
     const images = [
@@ -20,19 +21,15 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 6, label: 'Santi Cosma e Damiano', src: 'Cosma-Damiano.jpg'}
     ];
 
+
     // Trascinamento
     let draggedElement = null;
     let draggedElementSource = null;
-    
-    // Gestione dispositivi mobili
-    let isTouchDevice = false
 
     // Inizializzazione
     function initializeTierlist() {
         const tiersContainer = document.getElementById('tiersContainer');
         const imagePool = document.getElementById('imagePool');
-
-        isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         // Reset
         tiersContainer.innerHTML = '';
@@ -49,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${tier.label}
                 </div>
                 <div class="tier-content" data-tier="${tier.id}">
-                    <div class="empty-message">Rilascia qui</div>
+                    <div class="empty-message"></div>
                 </div>
             `;
 
@@ -60,13 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
             tierContent.addEventListener('dragover', handleDragOver);
             tierContent.addEventListener('drop', handleDrop);
             tierContent.addEventListener('dragleave', handleDragLeave);
-
-            // Eventi per gestire il trascinamento mobile
-            if (isTouchDevice) {
-                tierContent.addEventListener('touchmove', handleTouchMove, { passive: false });
-                tierContent.addEventListener('touchend', handleTouchEnd);
-                tierContent.addEventListener('touchleave', handleTouchLeave);
-            }
 
         });
 
@@ -79,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update
         document.getElementById('imageCount').textContent = images.length;
     }
+
 
 
     // Costruttore immagini trascinabili
@@ -98,15 +89,9 @@ document.addEventListener('DOMContentLoaded', function() {
         container.addEventListener('dragstart', handleDragStart);
         container.addEventListener('dragend', handleDragEnd)
 
-        // Eventi per gestire il trascinamento mobile
-        if (isTouchDevice) {
-            container.addEventListener('touchstart', handleTouchStart, { passive: false });
-            container.addEventListener('touchmove', handleTouchMove, { passive: false });
-            container.addEventListener('touchend', handleTouchEnd);
-        }
-
         return container;
     }
+
 
 
     // Gestione degli eventi di trascinamento
@@ -158,84 +143,158 @@ document.addEventListener('DOMContentLoaded', function() {
         processDrop(this, draggable, e.clientX);
     }
 
+
+
     // Gestione eventi di trascinamento mobile
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchCurrentElement = null;
-    let touchScrollBackup = null;
+    let activeTouch = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
 
     function handleTouchStart(e) {
-        e.preventDefault();
+        if (e.touches.length !== 1) return;
 
         const touch = e.touches[0];
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
-        touchCurrentElement = this;
-        touchScrollBackup = document.documentElement.style.overflow;
+        const element = e.target.closest('.draggable-image');
+        if(!element) return;
 
-        document.documentElement.style.overflow = 'hidden';
+        e.preventDefault();
 
-        this.classList.add('dragging');
-        this.style.position = 'relative';
-        this.style.zIndex = '1000';
-        this.style.transition = 'none';
+        activeTouch = {
+            id: touch.identifier,
+            startX: touch.clientX,
+            startY: touch.clientY,
+            element: element
+        }
 
-        draggedElement = this;
-        draggedElementSource = this.parentElement.id;
+        draggedElement = element;
+        draggedElementSource = element.parentElement.id;
+
+        const rect = element.getBoundingClientRect();
+        dragOffsetX = touch.clientX - rect.left;
+        dragOffsetY = touch.clientY - rect.top;
+
+        element.classList.add('touch-active')
     }
 
     function handleTouchMove(e) {
-        if(!touchCurrentElement) return;
+        if (!activeTouch || !draggedElement) return;
+
+        const touch = Array.from(e.touches).find(t => t.identifier === activeTouch.id);
+        if (!touch) return;
 
         e.preventDefault();
 
-        const touch = e.touches[0];
         const x = touch.clientX;
         const y = touch.clientY;
 
-        touchCurrentElement.style.transform = `translate(${x-touchStartX}px, ${y-touchStartY}px)`;
+        if (!draggedElement.classList.contains('dragging')) {
+            const dx = Math.abs(x-activeTouch.startX);
+            const dy = Math.abs(y-activeTouch.startY);
 
-        const elementsUnderTouch = document.elementsFromPoint(x,y);
-        const dropZone = elementsUnderTouch.find(el =>
-            el.classList.contains('tier-content') || el.id === 'imagePool'
-        );
+            if (dx > 10 || dy > 10) {
+                draggedElement.classList.add('dragging');
+                draggedElement.style.position = 'fixed';
+                draggedElement.style.zIndex = '99999';
+                draggedElement.style.pointerEvents = 'none';
+                draggedElement.style.transition = 'none'
+
+                draggedElement.style.left = `${x-dragOffsetX}px`;
+                draggedElement.style.top = `${y-dragOffsetY}px`;
+            }
+            return;
+        }
+
+        draggedElement.style.left = `${x-dragOffsetX}px`;
+        draggedElement.style.top = `${y-dragOffsetY}px`;
+
+        const scrollZoneHeight = 80;
+        const scrollSpeed = 15;
+
+        if (y < 2*scrollZoneHeight) {
+            window.scrollBy({ top: -scrollSpeed, behavior: 'instant' });
+            draggedElement.style.top = `${parseFloat(draggedElement.style.top)-scrollSpeed}px`;
+        } else if (y > window.innerHeight - scrollZoneHeight) {
+            window.scrollBy({ top: scrollSpeed, behavior: 'instant'});
+            draggedElement.style.top = `${parseFloat(draggedElement.style.top)+scrollSpeed}px`;
+        }
+
+        updateScrollIndicators(y);
 
         clearAllDropZones();
-        if (dropZone) {
-            dropZone.classList.add('drop-zone');
+        const elements = document.elementsFromPoint(x,y);
+
+        for (const el of elements) {
+            if (el === draggedElement || el.contains(draggedElement)) continue;
+            if (el.classList.contains('tier-content') || el.id === 'imagePool') {
+                el.classList.add('drop-zone');
+                break;
+            }
         }
+
     }
 
     function handleTouchEnd(e) {
-        if (!touchCurrentElement) return;
+        if (!activeTouch || !draggedElement) return;
 
-        const touch = e.changedTouches[0];
-        const x = touch.clientX;
-        const y = touch.clientY;
+        const touch = Array.from(e.changedTouches).find(t => t.identifier === activeTouch.id);
+        if (!touch) return;
 
-        const elementsUnderTouch = document.elementsFromPoint(x,y);
-        const dropZone = elementsUnderTouch.find(el =>
-            el.classList.contains('tier-content') || el.id === 'imagePool'
-        );
+        const wasDragging = draggedElement.classList.contains('dragging');
+        if (wasDragging) {
+            const x = touch.clientX;
+            const y = touch.clientY;
 
-        if (dropZone) {
-            processDrop(dropZone, touchCurrentElement, x);
+            const elements = document.elementsFromPoint(x,y);
+            let dropZone = null;
+
+            for (const el of elements) {
+                if (el === draggedElement || el.contains(draggedElement)) continue;
+
+                if (el.classList.contains('tier-content') || el.id === 'imagePool') {
+                    dropZone = el;
+                    break;
+                }
+            }
+
+            draggedElement.classList.remove('dragging');
+            draggedElement.style.position = '';
+            draggedElement.style.left = '';
+            draggedElement.style.top = '';
+            draggedElement.style.zIndex = '';
+            draggedElement.style.pointerEvents = '';
+            draggedElement.style.transition = '';
+            draggedElement.style.width = '';
+            draggedElement.style.height = '';
+
+            if (dropZone) {
+                processDrop(dropZone, draggedElement, x);
+            }
         }
 
-        // Cleanup
-        touchCurrentElement.classList.remove('dragging');
-        touchCurrentElement.style.transform = '';
-        touchCurrentElement.style.position = '';
-        touchCurrentElement.style.zIndex = '';
-        touchCurrentElement.style.transition = '';
-
-        touchCurrentElement = null;
+        draggedElement.classList.remove('touch-active');
+        activeTouch = null;
         draggedElement = null;
         draggedElementSource = null;
 
-        document.documentElement.style.overflow = touchScrollBackup;
-        touchScrollBackup = null;
+        clearAllDropZones();
 
+    }
+
+    function handleTouchCancel(e) {
+        if (draggedElement) {
+            draggedElement.classList.remove('dragging', 'touch-active');
+            draggedElement.style.position = '';
+            draggedElement.style.left = '';
+            draggedElement.style.top = '';
+            draggedElement.style.zIndex = '';
+            draggedElement.style.pointerEvents = '';
+            draggedElement.style.transition = '';
+        }
+        
+        activeTouch = null;
+        draggedElement = null;
+        draggedElementSource = null;
+        
         clearAllDropZones();
     }
 
@@ -251,8 +310,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Aggiunta e gestione indicatori scroll
+    if ('ontouchstart' in window) {
+        const scrollZoneTop = document.createElement('div');
+        scrollZoneTop.className = 'scroll-zone-indicator scroll-zone-top';
+        const scrollZoneBottom = document.createElement('div');
+        scrollZoneBottom.className = 'scroll-zone-indicator scroll-zone-bottom';
+        
+        document.body.appendChild(scrollZoneTop);
+        document.body.appendChild(scrollZoneBottom);
+    }
+
+    function updateScrollIndicators(y) {
+        if (!('ontouchstart' in window)) return;
+        
+        const scrollZoneHeight = 80;
+        const topIndicator = document.querySelector('.scroll-zone-top');
+        const bottomIndicator = document.querySelector('.scroll-zone-bottom');
+        
+        if (topIndicator && bottomIndicator) {
+            if (y < 2*scrollZoneHeight) {
+                topIndicator.classList.add('scroll-zone-active');
+                bottomIndicator.classList.remove('scroll-zone-active');
+            } else if (y > window.innerHeight - scrollZoneHeight) {
+                topIndicator.classList.remove('scroll-zone-active');
+                bottomIndicator.classList.add('scroll-zone-active');
+            } else {
+                topIndicator.classList.remove('scroll-zone-active');
+                bottomIndicator.classList.remove('scroll-zone-active');
+            }
+        }
+    }
+
     // Logica condivisa tra mobile e desktop
     function processDrop(dropZone, draggable, clientX) {
+
+        draggable.style.position = '';
+        draggable.style.top = '';
+        draggable.style.left = '';
+        draggable.style.zIndex = '';
+        draggable.style.pointerEvents = '';
+        draggable.style.transform = '';
 
         // Capisco se torno al pool o in un tier
         const isImagePool = dropZone.id === 'imagePool';
@@ -262,6 +360,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (emptyMessage) {
             emptyMessage.remove();
         }
+
+        const originalParent = draggable.parentElement;
+        const originalParentId = originalParent.id;
 
         // Se sono nel pool lascio lì
         if (isImagePool) {
@@ -275,13 +376,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 dropZone.insertBefore(draggable, afterElement);
             }
 
-            if (draggedElementSource === 'imagePool') {
+            if (originalParentId === 'imagePool') {
                 updateImageCount();
             }
 
-            const sourceElement = document.getElementById(draggedElementSource);
-            if (sourceElement && sourceElement.id !== 'imagePool' && sourceElement.children.length === 0) {
-                sourceElement.innerHTML = `<div class="empty-message">Rilascia qui</div>`
+            if (originalParent && originalParentId !== 'imagePool') {
+                setTimeout(() => {
+                    let b1 = originalParent.children.length === 0;
+                    let b2 = originalParent.children.length === 1;
+                    let b3 = originalParent.children[0].classList.contains('empty-message');
+                    if (b1 || (b2 && b3)) {
+                        originalParent.innerHTML = `<div class="empty-message"></div>`;
+                    }
+                }, 10);
             }
 
             draggable.style.transform = '';
@@ -290,7 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
-
     // Funzione per pulire le drop zone
     function clearAllDropZones() {
         const dropZones = document.querySelectorAll('.drop-zone');
@@ -298,7 +404,6 @@ document.addEventListener('DOMContentLoaded', function() {
             zone.classList.remove('drop-zone');
         });
     }
-
 
     // Funzione per il drop nel tier
     function getDragAfterElement(container, x) {
@@ -373,13 +478,32 @@ document.addEventListener('DOMContentLoaded', function() {
     imagePool.addEventListener('drop', handleDrop);
     imagePool.addEventListener('dragleave', handleDragLeave);
 
-    if (isTouchDevice) {
-        imagePool.addEventListener('touchmove', handleTouchMove, { passive: false });
-        imagePool.addEventListener('touchend', handleTouchEnd);
-        imagePool.addEventListener('touchleave', handleTouchLeave);
+
+    // Eventi mobile
+    function initializeMobileEvents() {
+        if (!('ontouchstart' in window)) return;
+        
+        const draggableImages = document.querySelectorAll('.draggable-image');
+        
+        draggableImages.forEach(img => {
+            img.addEventListener('touchstart', handleTouchStart, { passive: false });
+        });
+        
+        // Global touch events
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+        document.addEventListener('touchend', handleTouchEnd);
+        document.addEventListener('touchcancel', handleTouchCancel);
+        
+        // Also add touch events to drop zones
+        const dropZones = document.querySelectorAll('.tier-content, .image-pool');
+        dropZones.forEach(zone => {
+            zone.addEventListener('touchmove', handleTouchMove, { passive: false });
+            zone.addEventListener('touchend', handleTouchEnd);
+        });
     }
 
     initializeTierlist();
+    initializeMobileEvents();
 
 });
 

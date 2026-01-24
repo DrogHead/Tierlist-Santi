@@ -218,49 +218,93 @@ h1 {
 /* Roba per farlo funzionare da telefono... */
 @media (max-width: 768px) {
 
+    .draggable-image {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: none;
+        min-width: 100px;
+        min-height: 100px;
+    }
+    .touch-active {
+        opacity: 0.9;
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    .dragging {
+        opacity: 0.85;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.8) !important;
+        filter: brightness(1.1);
+        transform: scale(1.05);
+        transition: none !important;
+    }
+    body.dragging-active {
+        overflow: hidden;
+    }
+    .drop-zone {
+        border: 2px dashed #e94560 !important;
+        background-color: rgba(233,69,96,0.1) !important;
+    }
+
     .tier-row {
         flex-direction: column;
         min-height: auto;
+        position: relative;
+        z-index: 10;
     }
-    
     .tier-label {
         width: 100%;
         padding: 15px 0;
         font-size: 1.8rem;
+        position: relative;
+        z-index: 10;
     }
-
     .tier-content {
-        min-height: 100px;
+        min-height: 120px;
+        position: relative;
+        z-index: 5;
+    }
+    .image-pool {
+        position: relative;
+        z-index: 5;
     }
 
-    .draggable-image {
-        width: 100px;
-        height: 100px;
-        touch-action: none;
+    .scroll-zone-indicator {
+        position: fixed;
+        left: 0;
+        right: 0;
+        height: 80px;
+        pointer-events: none;
+        z-index: 99998;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .scroll-zone-top {
+        top: 0;
+        background: linear-gradient(to bottom, rgba(233,69,96,0.15), transparent);
+    }
+    .scroll-zone-top {
+        bottom: 0;
+        background: linear-gradient(to top, rgba(233,69,96,0.15), transparent);
+    }
+    .scroll-zone.active {
+        opacity: 1;
     }
 
-    .dragging {
-        opacity: 0.8;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
-    }
-
-    .draggable-image, .tier-content {
-        min-height: 100px;
-    }
 
     h1 {
         font-size: 2.2rem;
     }
-
     .controls {
         flex-direction: column;
         align-items: center;
     }
-
     .btn {
         width: 90%;
         justify-content: center;
     }
+
+    
 
 }
 
