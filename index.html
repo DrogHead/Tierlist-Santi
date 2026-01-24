@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tierlist Santi</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <h1><i class="fas fa-layer-group"></i> Tierlist Santi</h1>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> Come si usa?</h3>
+                <p>
+                    Trascina le immagini che trovi in basso nel tier corrispondente.
+                    Il tier più alto è (S), e poi in ordine ci sono (A), (B), (C), (D).
+                    Quando hai finito clicca su "Esporta" per scaricare l'immagine!
+                </p>
+            </div>
+
+            <div class="tierlist-container">
+
+                <div class="tiers-section">
+                    <h2><i class="fas fa-chart-bar"></i> Classifica</h2>
+                    <div class="tiers-container" id="tiersContainer">
+                        <!-- Le righe sono generate nel JS -->
+                    </div>
+                </div>
+
+                <div class="images-section">
+                    <div class="image-pool-header">
+                        <h2><i class="fas fa-images"></i> Santi :3</h2>
+                        <div class="image-count">Restano <span id="imageCount">6</span> santi</div>
+                    </div>
+                    <div class="image-pool" id="imagePool">
+                        <!-- Le immagini sono generate nel JS -->
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-export" id="exportBtn">
+                        <i class="fas fa-camera"></i> Esporta immagine
+                    </button>
+                    <button class="btn btn-reset" id="resetBtn">
+                        <i class="fas fa-redo"></i> Resetta classifica
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+        <script src="script.js"></script>
+
+    </body>
+
+</html>
