@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
         draggedElement.style.top = `${y-dragOffsetY}px`;
 
         const scrollZoneHeight = 80;
-        const scrollSpeed = 15;
+        const scrollSpeed = 8;
 
         if (y < 2*scrollZoneHeight) {
             window.scrollBy({ top: -scrollSpeed, behavior: 'instant' });
