@@ -23,11 +23,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Trascinamento
     let draggedElement = null;
     let draggedElementSource = null;
+    
+    // Gestione dispositivi mobili
+    let isTouchDevice = false
 
     // Inizializzazione
     function initializeTierlist() {
         const tiersContainer = document.getElementById('tiersContainer');
         const imagePool = document.getElementById('imagePool');
+
+        isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         // Reset
         tiersContainer.innerHTML = '';
@@ -55,6 +60,14 @@ document.addEventListener('DOMContentLoaded', function() {
             tierContent.addEventListener('dragover', handleDragOver);
             tierContent.addEventListener('drop', handleDrop);
             tierContent.addEventListener('dragleave', handleDragLeave);
+
+            // Eventi per gestire il trascinamento mobile
+            if (isTouchDevice) {
+                tierContent.addEventListener('touchmove', handleTouchMove, { passive: false });
+                tierContent.addEventListener('touchend', handleTouchEnd);
+                tierContent.addEventListener('touchleave', handleTouchLeave);
+            }
+
         });
 
         // Crea immagini trascinabili
@@ -85,11 +98,18 @@ document.addEventListener('DOMContentLoaded', function() {
         container.addEventListener('dragstart', handleDragStart);
         container.addEventListener('dragend', handleDragEnd)
 
+        // Eventi per gestire il trascinamento mobile
+        if (isTouchDevice) {
+            container.addEventListener('touchstart', handleTouchStart, { passive: false });
+            container.addEventListener('touchmove', handleTouchMove, { passive: false });
+            container.addEventListener('touchend', handleTouchEnd);
+        }
+
         return container;
     }
 
 
-    // Gestione degli eventi creati
+    // Gestione degli eventi di trascinamento
     function handleDragStart(e) {
         draggedElement = this;
         draggedElementSource = this.parentElement.id;
@@ -109,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         this.style.display = 'block';
         draggedElement = null;
         draggedElementSource = null;
+        clearAllDropZones();
     }
 
     function handleDragOver(e) {
@@ -129,52 +150,146 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!draggedElement) return;
 
-        // Ottengo l'id dell'elemento trascinato
         const id = e.dataTransfer.getData('text/plain');
         const draggable = document.getElementById(id);
 
         if (!draggable) return;
 
-        // Capisco se torno al pool o in un tier
-        const isImagePool = this.id === 'imagePool';
-        const targetTier = this.dataset.tier;
+        processDrop(this, draggable, e.clientX);
+    }
 
-        // Rimozione del messaggio di errore
-        const emptyMessage = this.querySelector('.empty-message');
+    // Gestione eventi di trascinamento mobile
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchCurrentElement = null;
+    let touchScrollBackup = null;
+
+    function handleTouchStart(e) {
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchCurrentElement = this;
+        touchScrollBackup = document.documentElement.style.overflow;
+
+        document.documentElement.style.overflow = 'hidden';
+
+        this.classList.add('dragging');
+        this.style.position = 'relative';
+        this.style.zIndex = '1000';
+        this.style.transition = 'none';
+
+        draggedElement = this;
+        draggedElementSource = this.parentElement.id;
+    }
+
+    function handleTouchMove(e) {
+        if(!touchCurrentElement) return;
+
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const x = touch.clientX;
+        const y = touch.clientY;
+
+        touchCurrentElement.style.transform = `translate(${x-touchStartX}px, ${y-touchStartY}px)`;
+
+        const elementsUnderTouch = document.elementsFromPoint(x,y);
+        const dropZone = elementsUnderTouch.find(el =>
+            el.classList.contains('tier-content') || el.id === 'imagePool'
+        );
+
+        clearAllDropZones();
+        if (dropZone) {
+            dropZone.classList.add('drop-zone');
+        }
+    }
+
+    function handleTouchEnd(e) {
+        if (!touchCurrentElement) return;
+
+        const touch = e.changedTouches[0];
+        const x = touch.clientX;
+        const y = touch.clientY;
+
+        const elementsUnderTouch = document.elementsFromPoint(x,y);
+        const dropZone = elementsUnderTouch.find(el =>
+            el.classList.contains('tier-content') || el.id === 'imagePool'
+        );
+
+        if (dropZone) {
+            processDrop(dropZone, touchCurrentElement, x);
+        }
+
+        // Cleanup
+        touchCurrentElement.classList.remove('dragging');
+        touchCurrentElement.style.transform = '';
+        touchCurrentElement.style.position = '';
+        touchCurrentElement.style.zIndex = '';
+        touchCurrentElement.style.transition = '';
+
+        touchCurrentElement = null;
+        draggedElement = null;
+        draggedElementSource = null;
+
+        document.documentElement.style.overflow = touchScrollBackup;
+        touchScrollBackup = null;
+
+        clearAllDropZones();
+    }
+
+    function handleTouchLeave(e) {
+        if (this.classList.contains('drop-zone')) {
+            const touch = e.changedTouches[0];
+            if (touch) {
+                const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
+                if (!elementsUnderTouch.includes(this)) {
+                    this.classList.remove('drop-zone');
+                }
+            }
+        }
+    }
+
+    // Logica condivisa tra mobile e desktop
+    function processDrop(dropZone, draggable, clientX) {
+
+        // Capisco se torno al pool o in un tier
+        const isImagePool = dropZone.id === 'imagePool';
+
+        // Rimuovo messaggio di errore
+        const emptyMessage = dropZone.querySelector('.empty-message');
         if (emptyMessage) {
             emptyMessage.remove();
         }
 
-        // Se sono nel pool lo lascio lì
+        // Se sono nel pool lascio lì
         if (isImagePool) {
-            this.appendChild(draggable);
-        }
-        // Se sono nel tier
-        else {
-            const afterElement = getDragAfterElement(this, e.clientX);
+            dropZone.appendChild(draggable)
+        } else {
+            const afterElement = getDragAfterElement(dropZone, clientX);
 
             if (afterElement == null) {
-                this.appendChild(draggable);
+                dropZone.appendChild(draggable);
             } else {
-                this.insertBefore(draggable, afterElement);
+                dropZone.insertBefore(draggable, afterElement);
             }
 
-            // Update del numero di santi
             if (draggedElementSource === 'imagePool') {
                 updateImageCount();
             }
 
-        }
+            const sourceElement = document.getElementById(draggedElementSource);
+            if (sourceElement && sourceElement.id !== 'imagePool' && sourceElement.children.length === 0) {
+                sourceElement.innerHTML = `<div class="empty-message">Rilascia qui</div>`
+            }
 
-        // Messaggio di errore
-        const sourceElement = document.getElementById(draggedElementSource);
-        if (sourceElement && sourceElement.id !== 'imagePool' && sourceElement.children.length === 0) {
-            sourceElement.innerHTML = `<div class="empty-message">Rilascia qui</div>`;
-        }
+            draggable.style.transform = '';
 
-        clearAllDropZones();
+        }
 
     }
+
 
     // Funzione per pulire le drop zone
     function clearAllDropZones() {
@@ -198,13 +313,13 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 return closest;
             }
-        }, {offset: Number.NEGATIVE_INFINITY }).elemnt;
+        }, {offset: Number.NEGATIVE_INFINITY }).element;
     }
 
     // Funzione per l'update del numero
     function updateImageCount() {
         const imagePool = document.getElementById('imagePool');
-        const imagesInPool = imagePool.querySelectorAll('.draggble-image').length;
+        const imagesInPool = imagePool.querySelectorAll('.draggable-image').length;
         document.getElementById('imageCount').textContent = imagesInPool;
     }
 
@@ -256,7 +371,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePool = document.getElementById('imagePool');
     imagePool.addEventListener('dragover', handleDragOver);
     imagePool.addEventListener('drop', handleDrop);
-    imagePool.addEventListener('dragleave', handleDragLeave)
+    imagePool.addEventListener('dragleave', handleDragLeave);
+
+    if (isTouchDevice) {
+        imagePool.addEventListener('touchmove', handleTouchMove, { passive: false });
+        imagePool.addEventListener('touchend', handleTouchEnd);
+        imagePool.addEventListener('touchleave', handleTouchLeave);
+    }
 
     initializeTierlist();
 

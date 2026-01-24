@@ -225,8 +225,8 @@ h1 {
     
     .tier-label {
         width: 100%;
-        padding: 10px 0;
-        font-size: 1.5rem;
+        padding: 15px 0;
+        font-size: 1.8rem;
     }
 
     .tier-content {
@@ -236,6 +236,16 @@ h1 {
     .draggable-image {
         width: 100px;
         height: 100px;
+        touch-action: none;
+    }
+
+    .dragging {
+        opacity: 0.8;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
+    }
+
+    .draggable-image, .tier-content {
+        min-height: 100px;
     }
 
     h1 {
