@@ -428,33 +428,91 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('imageCount').textContent = imagesInPool;
     }
 
+
     // Esportazione
+    const desktopExportStyle = document.createElement('style');
+    desktopExportStyle.textContent = `
+        .desktop-export-mode .tier-row {
+            flex-direction: row !important;
+            min-height: 110px !important;
+        }
+        .desktop-export-mode .tier-label {
+            width: 80px !important;
+            padding: 0 !important;
+            font-size: 1.8rem !important;
+            min-width: auto !important;
+        }
+        .desktop-export-mode .tier-content {
+            min-height: 110px !important;
+        }
+        .desktop-export-mode .draggable-image {
+            min-height: 90px !important;
+            min-width: 90px !important;
+        }
+        .desktop-export-mode .tierlist-container {
+            max-width: 900px !important;
+            margin: 0 auto !important;
+        }
+        .desktop-export-mode {
+            overflow: visible !important;
+        }
+    `;
+    document.head.appendChild(desktopExportStyle);
+
     async function exportAsImage() {
         const exportBtn = document.getElementById('exportBtn');
         const originalText = exportBtn.innerHTML;
+        const tierlistContainer = document.querySelector('.tierlist-container')
+        const tierlist = document.querySelector('.tiers-section');
 
         exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Attendi...';
         exportBtn.disabled = true;
 
         try {
-            const tierlistContainer = document.querySelector('.tierlist-container');
+            const isMobileView = window.innerWidth <= 768;
+            let wasDesktopMode = false;
 
-            const canvas = await html2canvas(tierlistContainer, {
+            if (isMobileView) {
+                wasDesktopMode = true;
+                tierlistContainer.classList.add('desktop-export-mode')
+                tierlistContainer.offsetHeight;
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            const canvas = await html2canvas(tierlist, {
                 backgroundColor: '#1a1a2e',
                 scale: 2,
                 useCORS: true,
-                logging: false
+                logging: false,
+                width: 900,
+                windowWidth: 900,
+                onclone: function(clonedDoc) {
+                    const clonedContainer = clonedDoc.querySelector('.tierlist-container');
+                    if (clonedContainer && isMobileView) {
+                        clonedContainer.classList.add('desktop-export-mode');
+                    }
+                }
             });
 
+            if (wasDesktopMode) {
+                tierlistContainer.classList.remove('desktop-export-mode');
+            }
+
             const link = document.createElement('a');
-            link.download = `tierlist-santi-${Date.now()}.png`;
+            const fileName = 'tierlist-santi';
+            link.download = `${fileName.replace(/\s+/g, '-')}-${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            alert('Immagine esportata con successo!');
+            alert('Tierlist esportata e scaricata con successo!')
         } catch (error) {
-            console.error('Errore in esportazione:', error)
-            alert('Esportazione non riuscita. Per favore riprova');
+            console.error('Errore in esportazione: ', error);
+            alert('Esportazione non riuscita. Per favore riprova.');
+
+            const tierlistContainer = document.querySelector('.tierlist-container');
+            if (tierlistContainer) {
+                tierlistContainer.classList.remove('desktop-export-mode');
+            }
         } finally {
             exportBtn.innerHTML = originalText;
             exportBtn.disabled = false;

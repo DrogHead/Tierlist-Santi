@@ -157,8 +157,8 @@ h1 {
 .image-pool {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    padding: 20px;
+    gap: 10px;
+    padding: 10px;
     background-color: rgba(255,255,255,0.05);
     border-radius: 10px;
     min-height: 150px;
@@ -223,8 +223,8 @@ h1 {
         -webkit-user-select: none;
         user-select: none;
         touch-action: none;
-        min-width: 100px;
-        min-height: 100px;
+        min-width: 80px;
+        min-height: 80px;
     }
     .touch-active {
         opacity: 0.9;
