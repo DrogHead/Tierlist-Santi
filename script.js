@@ -66,6 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePool.appendChild(imgElement);
         })
 
+        imagePool.innerHTML += `
+            <div class="logo-corner">
+                <img src="logo/luce.png" alt="Luce" title="Luce">
+            </div>
+        `;
+
         // Update
         document.getElementById('imageCount').textContent = images.length;
     }
