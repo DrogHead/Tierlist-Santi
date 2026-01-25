@@ -1,6 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Lista di tier
+    // Descrizioni dei santi
+    const descriptions = [
+        'San Bartolo Longo',
+        'Santa Teresa di Lisieux',
+        'San Sebastiano',
+        'San Paolo',
+        'San Giuseppe da Copertino',
+        'Santi Cosma e Damiano'
+    ];
+
+    // Informazioni dei tier
     const tiers = [
     { id: 's-tier', label: 'S', colorClass: 'tier-s', name: 'S' },
     { id: 'a-tier', label: 'A', colorClass: 'tier-a', name: 'A' },
@@ -10,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
 
-    // Immagini
+    // Dataset immagini
     const imgPath = "images/";
     const images = [
         { id: 1, label: 'San Bartolo Longo', src: 'Bartolo-Longo.webp'},
@@ -21,13 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 6, label: 'Santi Cosma e Damiano', src: 'Cosma-Damiano.jpg'}
     ];
 
-
-    // Trascinamento
-    let draggedElement = null;
-    let draggedElementSource = null;
-
     // Inizializzazione
     function initializeTierlist() {
+
+        // Prendo elementi del DOM
         const tiersContainer = document.getElementById('tiersContainer');
         const imagePool = document.getElementById('imagePool');
 
@@ -52,12 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             tiersContainer.appendChild(tierRow);
 
-            // Eventi per gestire il trascinamento
-            const tierContent = tierRow.querySelector('.tier-content');
-            tierContent.addEventListener('dragover', handleDragOver);
-            tierContent.addEventListener('drop', handleDrop);
-            tierContent.addEventListener('dragleave', handleDragLeave);
-
         });
 
         // Crea immagini trascinabili
@@ -66,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePool.appendChild(imgElement);
         })
 
+        // Aggiunge Luce in basso
         imagePool.innerHTML += `
             <div class="logo-corner">
                 <img src="logo/luce.png" alt="Luce" title="Luce">
@@ -76,94 +78,244 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('imageCount').textContent = images.length;
     }
 
-
-
     // Costruttore immagini trascinabili
     function createDraggableImage(image) {
+
+        // Crea un elemento div e assegna le classi per farlo funzionare
         const container = document.createElement('div');
         container.className = 'draggable-image';
         container.draggable = true;
         container.id = `image-${image.id}`;
         container.dataset.imageId = image.id;
+        container.dataset.imageLabel = image.label;
+        container.dataset.imageDescription = descriptions[image.id-1];
 
+        // Aggiunge il testo e l'immagine
         container.innerHTML = `
+            <div class="image-info-btn" title="Info">i</div>
             <img src="${imgPath+image.src}" alt="${image.label}">
             <div class="image-label">${image.label}</div>
         `;
 
-        // Eventi per gestire il trascinamento
+        // Eventi trascinamento
         container.addEventListener('dragstart', handleDragStart);
-        container.addEventListener('dragend', handleDragEnd)
+        container.addEventListener('dragend', handleDragEnd);
+
+        // Aggiunge il tasto per le informazioni
+        const infoBtn = container.querySelector('.image-info-btn');
+        infoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            showImageModal(container);
+        });
+        infoBtn.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+        });
+        infoBtn.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+        });
 
         return container;
     }
 
 
 
-    // Gestione degli eventi di trascinamento
+    // =============== STILI DI SUPPORTO ===============
+    const desktopDragStyles = document.createElement('style');
+    desktopDragStyles.textContent = `
+        .draggable-image {
+            user-select: none;
+            -webkit-user-drag: element;
+        }
+        .dragging {
+            opacity: 0.7 !important;
+            transform: scale(1.05) !important;
+            transition: opacity 0.2s, transform 0.1s !important;
+        }
+        .dragging::after {
+            content: '';
+            position: fixed;
+            top: -1000px;
+            right: -1000px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(233,69,96,0.1);
+            border: 2px dashed #e94560;
+            border-radius: 8px;
+            z-index: 100000;
+            pointer-events: none;
+        }
+        .drop-zone {
+            outline: 3px dashed #e94560 !important;
+            outline-offset: -3px;
+            background-color: rgba(233,69,96,0.1) !important;
+        }
+        .tier-content, .image-pool {
+            user-select: none;
+        }
+        .drag-ghost {
+            width: 100px !important;
+            height: 100px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6) !important;
+            background-color: rgba(26,26,46,0.9) !important;
+            border: 2px solid #e94560 !important;
+        }
+        .drag-ghost img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 6px !important;
+        }
+        .drag-ghost .image-label {
+            display: none !important;
+        }
+        .drag-ghost .image-info-btn {
+            display: none !important;
+        }
+    `;
+    document.head.appendChild(desktopDragStyles);
+
+
+
+    // =============== GESTIONE TRASCINAMENTO DESKTOP ===============
+    let draggedElement = null;
+    let draggedElementSource = null;
+
+    // Evento: inizia il trascinamento
     function handleDragStart(e) {
         draggedElement = this;
         draggedElementSource = this.parentElement.id;
 
+        // Add visuals
         this.classList.add('dragging');
 
+        // Si crea un'immagine da trascinare
+        const dragImage = this.cloneNode(true);
+        dragImage.style.position = 'fixed';
+        dragImage.style.top = '-1000px';
+        dragImage.style.left = '-1000px';
+        dragImage.style.opacity = '0.7';
+        dragImage.style.transform = 'scale(1.1)';
+        dragImage.style.zIndex = '100000';
+        dragImage.style.pointerEvents = 'none'
+        dragImage.classList.add('drag-ghost');
+
+        // Aggiunta al body
+        document.body.appendChild(dragImage);
+        e.dataTransfer.setDragImage(dragImage, this.offsetWidth/2, this.offsetHeight/2)
+
+        // Cleanup
         setTimeout(() => {
-            this.style.display = 'none';
+            if (document.body.contains(dragImage)) {
+                document.body.removeChild(dragImage);
+            }
         }, 0);
 
+        // Setup datatransfer
         e.dataTransfer.setData('text/plain', this.id);
         e.dataTransfer.effectAllowed = 'move';
+
+        // Nascondo l'immagine originale
+        setTimeout(() => {
+            if (draggedElement === this) {
+                this.style.opacity = '0.4';
+            }
+        }, 0);
+
     }
 
+    // Evento: finisce il trascinamento
     function handleDragEnd(e) {
-        this.classList.remove('dragging');
-        this.style.display = 'block';
+        if (draggedElement) {
+            draggedElement.classList.remove('dragging');
+            draggedElement.style.opacity = '1';
+            draggedElement.style.display = 'block';
+        }
+
+        // Cleanup
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.classList.remove('.drop-zone');
+        });
         draggedElement = null;
         draggedElementSource = null;
-        clearAllDropZones();
     }
 
+    // Evento: trascino un elemento sopra un altro
     function handleDragOver(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        this.classList.add('drop-zone');
+
+        // Controllo se la dropzone è valida
+        if (this.classList.contains('tier-content') || this.id === 'imagePool') {
+            this.classList.add('drop-zone');
+        }
     }
 
+    // Evento: il trascinamento sopra un altro sta finendo
     function handleDragLeave(e) {
-        if (!this.contains(e.relatedTarget) || e.relatedTarget === null) {
+        if (!this.contains(e.relatedTarget)) {
             this.classList.remove('drop-zone');
         }
     }
 
+    // Evento: rilascio l'oggetto
     function handleDrop(e) {
         e.preventDefault();
+        e.stopPropagation();
+
+        // Rimozione highlight
         this.classList.remove('drop-zone');
 
-        if (!draggedElement) return;
+        // Ottenimento elemento trascinato
+        if (!draggedElement) {
+            try {
+                const id = e.dataTransfer.getData('text/plain');
+                if (id) {
+                    draggedElement = document.getElementById(id);
+                }
+            } catch (err) {
+                console.warn('Elemento trascinato non trovato');
+                return;
+            }
+        }
+        if (!draggedElement) {
+            console.warn('Elemento trascinato non trovato');
+            return;
+        }
 
-        const id = e.dataTransfer.getData('text/plain');
-        const draggable = document.getElementById(id);
+        // Rendo elementi visibili
+        draggedElement.style.opacity = '1';
+        draggedElement.classList.remove('dragging');
 
-        if (!draggable) return;
+        // Logica del rialscio
+        processDrop(this, draggedElement, e.clientX);
 
-        processDrop(this, draggable, e.clientX);
+        // Cleanup
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.classList.remove('drop-zone');
+        });
+
     }
+    
 
 
-
-    // Gestione eventi di trascinamento mobile
+    // =============== GESTIONE TRASCINAMENTO MOBILE ===============
     let activeTouch = null;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
 
+    // Evento: inizio touch
     function handleTouchStart(e) {
         if (e.touches.length !== 1) return;
 
+        // Controllo cosa ho toccato
         const touch = e.touches[0];
         const element = e.target.closest('.draggable-image');
         if(!element) return;
 
         e.preventDefault();
+
+        // Se ho toccato il tasto info non inizio
+        if (e.target.closest('.image-info-btn')) return;
 
         activeTouch = {
             id: touch.identifier,
@@ -175,6 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
         draggedElement = element;
         draggedElementSource = element.parentElement.id;
 
+        // Calcolo offset
         const rect = element.getBoundingClientRect();
         dragOffsetX = touch.clientX - rect.left;
         dragOffsetY = touch.clientY - rect.top;
@@ -182,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
         element.classList.add('touch-active')
     }
 
+    // Evento: movimento touch
     function handleTouchMove(e) {
         if (!activeTouch || !draggedElement) return;
 
@@ -226,7 +380,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         updateScrollIndicators(y);
 
-        clearAllDropZones();
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.classList.remove('drop-zone');
+        });
         const elements = document.elementsFromPoint(x,y);
 
         for (const el of elements) {
@@ -239,6 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
+    // Evento: fine touch
     function handleTouchEnd(e) {
         if (!activeTouch || !draggedElement) return;
 
@@ -262,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
+            // Cleanup
             draggedElement.classList.remove('dragging');
             draggedElement.style.position = '';
             draggedElement.style.left = '';
@@ -278,14 +436,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         draggedElement.classList.remove('touch-active');
+
+        // Reset state
         activeTouch = null;
         draggedElement = null;
         draggedElementSource = null;
 
-        clearAllDropZones();
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.classList.remove('drop-zone');
+        });
 
     }
 
+    // Evento: touch cancellato
     function handleTouchCancel(e) {
         if (draggedElement) {
             draggedElement.classList.remove('dragging', 'touch-active');
@@ -301,22 +464,14 @@ document.addEventListener('DOMContentLoaded', function() {
         draggedElement = null;
         draggedElementSource = null;
         
-        clearAllDropZones();
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.classList.remove('drop-zone');
+        });
     }
 
-    function handleTouchLeave(e) {
-        if (this.classList.contains('drop-zone')) {
-            const touch = e.changedTouches[0];
-            if (touch) {
-                const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
-                if (!elementsUnderTouch.includes(this)) {
-                    this.classList.remove('drop-zone');
-                }
-            }
-        }
-    }
 
-    // Aggiunta e gestione indicatori scroll
+
+    // =============== GESTIONE INDICATORI SCROLL MOBILE ===============
     if ('ontouchstart' in window) {
         const scrollZoneTop = document.createElement('div');
         scrollZoneTop.className = 'scroll-zone-indicator scroll-zone-top';
@@ -348,32 +503,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Logica condivisa tra mobile e desktop
+
+
+    // =============== LOGICA CONDIVISA DESKTOP-MOBILE ===============
+    
+    // Gestione dell'elemento in cui ho lasciato l'immagine
     function processDrop(dropZone, draggable, clientX) {
 
-        draggable.style.position = '';
-        draggable.style.top = '';
-        draggable.style.left = '';
-        draggable.style.zIndex = '';
-        draggable.style.pointerEvents = '';
-        draggable.style.transform = '';
+        // Rimuovo testo vuoto
+        const emptyMessage = dropZone.querySelector('.empty-message');
+        if (emptyMessage) emptyMessage.remove();
 
-        // Capisco se torno al pool o in un tier
+
+        // Controllo se la dropzone è imagePool
         const isImagePool = dropZone.id === 'imagePool';
 
-        // Rimuovo messaggio di errore
-        const emptyMessage = dropZone.querySelector('.empty-message');
-        if (emptyMessage) {
-            emptyMessage.remove();
-        }
-
+        // Ottengo elemento parent
         const originalParent = draggable.parentElement;
         const originalParentId = originalParent.id;
 
-        // Se sono nel pool lascio lì
+        // Rilascio in imagePool
         if (isImagePool) {
-            dropZone.appendChild(draggable)
-        } else {
+            dropZone.appendChild(draggable);
+            updateImageCount();
+        }
+        // Rilascio in tiercontent
+        else {
+
             const afterElement = getDragAfterElement(dropZone, clientX);
 
             if (afterElement == null) {
@@ -386,29 +542,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateImageCount();
             }
 
-            if (originalParent && originalParentId !== 'imagePool') {
-                setTimeout(() => {
-                    let b1 = originalParent.children.length === 0;
-                    let b2 = originalParent.children.length === 1;
-                    let b3 = originalParent.children[0].classList.contains('empty-message');
-                    if (b1 || (b2 && b3)) {
-                        originalParent.innerHTML = `<div class="empty-message"></div>`;
-                    }
-                }, 10);
-            }
-
-            draggable.style.transform = '';
-
         }
 
-    }
+        // Eventuale messaggio vuoto
+        setTimeout(() => {
+            if (originalParent && originalParent.id !== 'imagePool') {
+                const children = originalParent.children;
+                const isEmpty = children.length === 0;
+                const hasOnlyEmptyMessage = children.length === 1 && children[0].classList.contains('empty-message');
 
-    // Funzione per pulire le drop zone
-    function clearAllDropZones() {
-        const dropZones = document.querySelectorAll('.drop-zone');
-        dropZones.forEach(zone => {
-            zone.classList.remove('drop-zone');
-        });
+                if (isEmpty || hasOnlyEmptyMessage) {
+                    originalParent.innerHTML = `
+                        <div class="empty-message"></div>
+                    `;
+                }
+            }
+        }, 50);
+
+
     }
 
     // Funzione per il drop nel tier
@@ -435,7 +586,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    // Esportazione
+    
+    // =============== TASTI PER LE INFORMAZIONI ===============
+    function showImageModal(imageElement) {
+
+        // Prendo elementi del DOM
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalText = document.getElementById('modalText')
+
+        // Prendo info dall'immagine
+        const img = imageElement.querySelector('img');
+        const label = imageElement.dataset.imageLabel;
+        const desc = imageElement.dataset.imageDescription;
+
+        // Metto immagine corretta
+        modalImage.src = img.src;
+        modalImage.alt = label;
+        modalText.innerHTML = `
+            <h3>${label}</h3>
+            <p>${desc}</p>
+            <small>Premi la X, il tasto ESC, o fuori dal riquadro per uscire</small>
+        `;
+
+        // Mostro modal
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    
+
+    // =============== ESPORTAZIONE ===============
     const desktopExportStyle = document.createElement('style');
     desktopExportStyle.textContent = `
         .desktop-export-mode .tier-row {
@@ -525,26 +713,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Reset
+
+
+    // =============== RESET ===============
     function resetTierlist() {
         if (confirm('Sicuro di voler resettare?')) {
             initializeTierlist();
         }
     }
 
-    // Eventi per i bottoni
-    document.getElementById('exportBtn').addEventListener('click', exportAsImage);
-    document.getElementById('resetBtn').addEventListener('click', resetTierlist);
-
-    // Eventi alle immagini
-    const imagePool = document.getElementById('imagePool');
-    imagePool.addEventListener('dragover', handleDragOver);
-    imagePool.addEventListener('drop', handleDrop);
-    imagePool.addEventListener('dragleave', handleDragLeave);
 
 
-    // Eventi mobile
-    function initializeMobileEvents() {
+    // =============== SETUP EVENTI GLOBALI ===============
+
+    // Desktop Drag
+    function setupDesktopEvents() {
+        const allDraggables = document.querySelectorAll('.draggable-image');
+        const allDropZones = document.querySelectorAll('.tier-content, #imagePool');
+    
+        allDraggables.forEach(img => {
+            img.setAttribute('draggable', 'true');
+            img.addEventListener('dragstart', handleDragStart);
+            img.addEventListener('dragend', handleDragEnd);
+        });
+
+        allDropZones.forEach(zone => {
+            zone.addEventListener('dragover', handleDragOver);
+            zone.addEventListener('dragleave', handleDragLeave);
+            zone.addEventListener('drop', handleDrop);
+        })
+    }
+
+    // Touch
+    function setupMobileEvents() {
         if (!('ontouchstart' in window)) return;
         
         const draggableImages = document.querySelectorAll('.draggable-image');
@@ -566,8 +767,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Bottoni export/reset
+    document.getElementById('exportBtn').addEventListener('click', exportAsImage);
+    document.getElementById('resetBtn').addEventListener('click', resetTierlist);
+
+    // Box informazioni
+    document.querySelector('.modal-close').addEventListener('click', closeImageModal);
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeImageModal();
+        }
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeImageModal();
+        }
+    });
+
+    
+
+
+    // Primer
     initializeTierlist();
-    initializeMobileEvents();
+    setupDesktopEvents();
+    setupMobileEvents();
 
 });
 
