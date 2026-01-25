@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // Descrizioni dei santi
-    const descriptions = [
-        'San Bartolo Longo',
-        'Santa Teresa di Lisieux',
-        'San Sebastiano',
-        'San Paolo',
-        'San Giuseppe da Copertino',
-        'Santi Cosma e Damiano'
+    const descs = [
+        ``,
+        ``,
+        ``,
+        ``,
+        ``,
+        ``
     ];
 
     // Informazioni dei tier
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
         container.id = `image-${image.id}`;
         container.dataset.imageId = image.id;
         container.dataset.imageLabel = image.label;
-        container.dataset.imageDescription = descriptions[image.id-1];
+        container.dataset.imageDesc = descs[image.id-1];
 
         // Aggiunge il testo e l'immagine
         container.innerHTML = `
@@ -99,21 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Eventi trascinamento
         container.addEventListener('dragstart', handleDragStart);
-        container.addEventListener('dragend', handleDragEnd);
-
-        // Aggiunge il tasto per le informazioni
-        const infoBtn = container.querySelector('.image-info-btn');
-        infoBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            showImageModal(container);
-        });
-        infoBtn.addEventListener('mousedown', function(e) {
-            e.stopPropagation();
-        });
-        infoBtn.addEventListener('touchstart', function(e) {
-            e.stopPropagation();
-        });
+        container.addEventListener('dragend', handleDragEnd);       
 
         return container;
     }
@@ -175,6 +161,114 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(desktopDragStyles);
+
+    const modalStyles = document.createElement('style');
+    modalStyles.textContent = `
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            z-index: 100000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: #1a1a2e;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 85vh;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+            border: 2px solid #e94560;
+            animation: slideUp 0.3 ease;
+            overflow: scroll;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-content img {
+            width: 100%;
+            max-height: 50vh;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .modal-text {
+            color: white;
+            padding: 15px;
+            background-color: rgba(233,69,96,0.1);
+            border-radius: 8px;
+            border-left: 4px solid #e94560;
+        }
+
+        .modal-text h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .modal-text p {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .modal-text small {
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100001;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .modal-close:hover {
+            background-color: rgba(233,69,96,0.3);
+            color: #e94560;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 90vh;
+            }
+            .modal-close {
+                top: 10px;
+                right: 15px;
+                font-size: 28px;
+            }
+        }
+    `;
+    document.head.appendChild(modalStyles);
 
 
 
@@ -590,26 +684,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // =============== TASTI PER LE INFORMAZIONI ===============
     function showImageModal(imageElement) {
 
-        // Prendo elementi del DOM
+        // Elementi del DOM
         const modal = document.getElementById('imageModal');
         const modalImage = document.getElementById('modalImage');
-        const modalText = document.getElementById('modalText')
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
 
-        // Prendo info dall'immagine
+        if (!modal || !modalImage) {
+            console.error('Elemento non trovato (modal)');
+            return;
+        }
+
+        // Ottenimento dati
         const img = imageElement.querySelector('img');
-        const label = imageElement.dataset.imageLabel;
-        const desc = imageElement.dataset.imageDescription;
+        const label = imageElement.dataset.imageLabel || 'Immagine non disponibile';
+        const desc = imageElement.dataset.imageDesc || 'Descrizione non disponibile';
 
-        // Metto immagine corretta
+        // Setup
         modalImage.src = img.src;
         modalImage.alt = label;
-        modalText.innerHTML = `
-            <h3>${label}</h3>
-            <p>${desc}</p>
-            <small>Premi la X, il tasto ESC, o fuori dal riquadro per uscire</small>
-        `;
-
-        // Mostro modal
+        modalTitle.textContent = label;
+        modalDesc.innerHTML = desc;
+        
+        // Comparsa
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
 
@@ -617,8 +714,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function closeImageModal() {
         const modal = document.getElementById('imageModal');
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     }
 
     
@@ -767,6 +866,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Info
+    function setupInfoEvents() {
+        const allInfoBtns = document.querySelectorAll('.image-info-btn');
+
+        allInfoBtns.forEach(infoBtn => {
+            infoBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                showImageModal(infoBtn.parentElement);
+            });
+            infoBtn.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            infoBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+    }
+
     // Bottoni export/reset
     document.getElementById('exportBtn').addEventListener('click', exportAsImage);
     document.getElementById('resetBtn').addEventListener('click', resetTierlist);
@@ -791,6 +912,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTierlist();
     setupDesktopEvents();
     setupMobileEvents();
+    setupInfoEvents();
 
 });
 
