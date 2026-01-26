@@ -829,7 +829,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupDesktopEvents() {
         const allDraggables = document.querySelectorAll('.draggable-image');
         const allDropZones = document.querySelectorAll('.tier-content, #imagePool');
-    
+        const allInfoBtns = document.querySelectorAll('.image-info-btn');
+
         allDraggables.forEach(img => {
             img.setAttribute('draggable', 'true');
             img.addEventListener('dragstart', handleDragStart);
@@ -841,34 +842,6 @@ document.addEventListener('DOMContentLoaded', function() {
             zone.addEventListener('dragleave', handleDragLeave);
             zone.addEventListener('drop', handleDrop);
         })
-    }
-
-    // Touch
-    function setupMobileEvents() {
-        if (!('ontouchstart' in window)) return;
-        
-        const draggableImages = document.querySelectorAll('.draggable-image');
-        
-        draggableImages.forEach(img => {
-            img.addEventListener('touchstart', handleTouchStart, { passive: false });
-        });
-        
-        // Global touch events
-        document.addEventListener('touchmove', handleTouchMove, { passive: false });
-        document.addEventListener('touchend', handleTouchEnd);
-        document.addEventListener('touchcancel', handleTouchCancel);
-        
-        // Also add touch events to drop zones
-        const dropZones = document.querySelectorAll('.tier-content, .image-pool');
-        dropZones.forEach(zone => {
-            zone.addEventListener('touchmove', handleTouchMove, { passive: false });
-            zone.addEventListener('touchend', handleTouchEnd);
-        });
-    }
-
-    // Info
-    function setupInfoEvents() {
-        const allInfoBtns = document.querySelectorAll('.image-info-btn');
 
         allInfoBtns.forEach(infoBtn => {
             infoBtn.addEventListener('click', function(e) {
@@ -881,10 +854,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 e.stopPropagation();
             });
+        });
+    }
+
+    // Touch
+    function setupMobileEvents() {
+        if (!('ontouchstart' in window)) return;
+        
+        const draggableImages = document.querySelectorAll('.draggable-image');
+        
+        draggableImages.forEach(img => {
+            img.addEventListener('touchstart', handleTouchStart, { passive: false });
+        });
+
+        draggableImages.forEach(img => {
+            infoBtn = img.querySelector('.image-info-btn');
             infoBtn.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
+                if (activeTouch) activeTouch = null;
+                showImageModal(img);
+            }, { passive: false });
+
+            infoBtn.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
             });
+        })
+        
+        // Global touch events
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+        document.addEventListener('touchend', handleTouchEnd);
+        document.addEventListener('touchcancel', handleTouchCancel);
+        
+        // Also add touch events to drop zones
+        const dropZones = document.querySelectorAll('.tier-content, .image-pool');
+        dropZones.forEach(zone => {
+            zone.addEventListener('touchmove', handleTouchMove, { passive: false });
+            zone.addEventListener('touchend', handleTouchEnd);
         });
     }
 
@@ -900,19 +908,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' || e.key === 'X' || e.key === 'x') {
             closeImageModal();
         }
     });
-
-    
 
 
     // Primer
     initializeTierlist();
     setupDesktopEvents();
     setupMobileEvents();
-    setupInfoEvents();
 
 });
 
