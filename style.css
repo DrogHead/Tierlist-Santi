@@ -380,3 +380,12 @@ h1 {
     font-weight: bold;
     border: 2px solid white;
 }
+
+
+/* Links */
+a:link {
+    color: #e94560;
+}
+a:visited {
+    color: #e31638;
+}

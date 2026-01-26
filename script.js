@@ -2,23 +2,180 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Descrizioni dei santi
     const descs = [
-        ``,
-        ``,
-        ``,
-        ``,
-        ``,
-        ``
+        // San Bartolo Longo
+        `Un fervente e irruento apostolo del santo Rosario. Durante gli
+        anni dell'università, vivendo in un ambiente anticlericale,
+        diventò sacerdote spiritista. Dopo un periodo di depressione e
+        crisi esistenziale, segnato anche dal suicidio di un amico,
+        si affidò al professore Vincenzo Pepe. Quest'ultimo lo indirizzò da
+        padre Alberto Radente, e sotto la sua guida Bartolo entrò a far parte
+        del Terzo Ordine di San Domenico, nel quale maturò una devozione per
+        il santo Rosario. Abbandonata la professione di avvocato per cui aveva
+        studiato, si dedicò alle opere di carità e assistenza, e conobbe Ludovico
+        da Casoria, Caterina Volpicelli (futuri santi) e la contessa Marianna
+        Farnararo de Fusco (futura moglie).
+        <br><br>
+        Fu lei a mandare Bartolo a Pompei, che allora contava mille abitanti
+        e versava in uno stato di arretratezza e abbandono. Bartolo sentiva
+        un tumulto interiore e di dubbio riguardo alla sua missione, nonostante
+        le numerose opere di carità. Mentre camminava per Via Arpaia in preda
+        a questi pensieri, sentì una voce dall'alto che diceva <i>
+        "Se propaghi il Rosario, sarai salvo"</i>, seguita dalle campane dell'Angelus
+        di mezzogiorno. Si inginocchiò in preghiera e finalmente provò
+        una sensazione di pace interiore, avendo più chiara la sua vocazione.
+        <br><br>
+        Dopo essersi sposato con la contessa De Fusco (la loro amicizia dava
+        adito a fastidiose maldicenze), Bartolo iniziò la costruzione della nuova
+        città di Pompei fondata sulla devozione al santo Rosario: andò a prelevare
+        il quadro della Madonna del Rosario a Napoli, iniziò la stesura della
+        preghiera della Supplica e, anche grazie alle donazioni dei fedeli,
+        iniziò la costruzione della facciata dal Santuario. Intorno al cantiere del
+        Santuario sorsero edifici di assistenza sociale come le case operaie, farmacie,
+        un ospedale. Inoltre, Bartolo decise di scommettere e investire sui figli e
+        le figlie dei carcerati, allora considerati criminali alla stregua dei genitori,
+        e istituì delle strutture per educarli e insegnare loro un mestiere per
+        riabilitarli agli occhi della società.
+        `,
+        // Santa Teresa di Lisieux
+        `L'infanzia di Thérèse fu segnata da numerose fragilità fisiche e psicologiche:
+        già all'età di un anno fu affidata alle cure di una nutrice per problemi intestinali,
+        e all'età di quattro anni si trovò orfana di madre a causa di un cancro al seno. Ciò
+        la rese una bambina molto sensibile ed emotivamente instabile, e quando la sorella
+        maggiore, da lei identificata come seconda madre, partì per il convento, Thérèse
+        trascorse un periodo di forte depressione, segnato da crisi di pianto, allucinazioni,
+        convulsioni, e disturbi del sonno. È lei stessa ad affermare di essere guarita da
+        questo stato grazie all'intercessione della Vergine Maria e alla continua
+        corrispondenza con la sorella, anche se la sua salute rimase fragile. Era
+        particolarmente legata al sacramento della Comunione, e dopo la sua Cresima scrisse
+        che quel "sacramento d'amore" le aveva dato "la forza di soffrire". A 15 anni e
+        dopo aver superato i giudizi negativi del padre, dello zio, del superiore del
+        Carmelo di Lisieux e persino del Vescovo, Thérèse riuscì a entrare nelle suore
+        carmelitane.
+        <br><br>
+        All'interno del monastero Thérèse conduceva una vita ordinaria, sempre caratterizzata
+        da ipersensibilità, sofferenze fisiche e spirituali, e numerosi dubbi sulla fede. In
+        particolare, quando la situazione neurologica di suo padre peggiorò gravemente e
+        dovette essere internato tre anni in un ospedale psichiatrico, Thérèse si rifugiò
+        nel silenzio e nella preghiera, in preda a uno stato di forte tensione e dubbi. Anche
+        quando diventò ufficialmente suora a 17 anni, il padre non poté partecipare, e lei
+        racconta di un giorno di gioia ma "interamente velato di lacrime".
+        <br><br>
+        I forti dubbi di Thérèse la portavano continuamente al confronto con altri grandi
+        santi come Teresa d'Avila, Paolo di Tarso e Giovanna d'Arco (a cui era talmente
+        devota che fece un cosplay,
+        <a href="https://archives.carmeldelisieux.fr/en/photos-de-therese/">foto da 11 a 15</a>),
+        e i suoi limiti la facevano sentire piccola e insignificante. Comprese però che
+        proprio questa piccolezza l'avrebbe portata alla santità. La teologia della "Piccola Via"
+        consiste in un cammino di santità accessibile a tutti, che non si basa su grandi
+        atti eroici, ma sull'abbandono fiducioso all'amore di Dio, e sul fare le piccole
+        azioni quotidiane con grande amore. Thérèse morì a 24 anni di tubercolosi.
+        <br><br>
+        Ora è patrona dei missionari, patrona secondaria di Francia, e considerata
+        popolarmente protettrice di coloro che soffrono di malattie mentali, proprio
+        per i suoi trascorsi con esse e per la sua costante lotta contro l'ipersensibilità
+        e gli stati d'ansia. Dal 1997 è Dottore della Chiesa, la terza donna a ricevere
+        questo titolo.
+        `,
+        // San Sebastiano
+        `Sebastiano visse sotto l'impero di Diocleziano, segnato in particolare da
+        una politica religiosa
+        <a href="https://it.wikipedia.org/wiki/Persecuzione_dei_cristiani_sotto_Diocleziano">anticristiana</a>.
+        Fu istruito nei principi della fede cristiana a Milano, e poi si trasferì a Roma,
+        dove fece carriera nell'esercito e divenne tribuno della prima corte pretoria,
+        il reparto militare che svolgeva compiti di guardia del corpo dell'imperatore.
+        Si racconta che Sebastiano visitò in carcere due giovani cristiani, Marco e
+        Marcellino, aiutandoli a rimanere saldi nella fede anche davanti all'opzione
+        di salvarsi offrendo sacrifici agli dei romani. Questo dialogo ebbe l'effetto di
+        convertire al cristianesimo anche altri presenti e di guarire una donna muta, Zoe.
+        <br><br>
+        Diocleziano, venuto a sapere che uno dei suoi pretoriani era cristiano, ordinò la
+        condanna a morte di Sebastiano. Questi fu legato a un palo, denudato, e trafitto
+        da numerose frecce. I soldati, vedendolo morente, lo abbandonarono sul luogo affinché
+        il suo corpo fosse divorato dagli animali, ma Sebastiano fu trovato da Santa Irene di Roma,
+        che lo trasportò nella sua dimora e si prese cura delle sue ferite. Una volta guarito,
+        Sebastiano, nonostante i consigli di abbandonare la città, tornò da Diocleziano per
+        proclamare nuovamente la sua fede e rimproverare le sue persecuzioni contro i cristiani,
+        senza successo: Diocleziano ordinò che fosse flagellato a morte e il castigo fu eseguito.
+        <br><br>
+        Ora è patrono della polizia locale italiana e dei militari, come esempio di membro
+        dell'esercito che ha messo davanti ai suoi doveri la fede, ed è anche patrono degli
+        arcieri dato il suo metodo di martirio. Viene invocato, insieme a San Rocco, come
+        protettore dei malati di peste, e quindi per associazione anche come protettore dei
+        malati di AIDS.
+        `,
+        // San Paolo
+        `L'apostolo dei Gentili, primo missionario cristiano. Nato Saulo, la sua storia viene
+        raccontata nel Nuovo Testamento tra gli Atti degli Apostoli e le lettere alle diverse
+        comunità cristiane fondate durante i suoi viaggi. La sua prima comparsa in questi testi
+        lo vede come presente e accondiscendente all'uccisione di Santo Stefano, primo martire,
+        collocandolo quindi nel ruolo di persecutore dei cristiani, principalmente a livello
+        giuridico. Gli Atti degli Apostoli raccontano la sua conversione, a cui Paolo si riferisce
+        nelle sue lettere anche con il nome di chiamata, scelta, o conquista:
+        <br><br>
+        <i>
+        "E avvenne che, mentre era in viaggio e stava per avvicinarsi a Damasco, all'improvviso
+        lo avvolse una luce dal cielo e cadendo a terra udì una voce che gli diceva: &laquo;Saulo,
+        Saulo, perché mi perseguiti?&raquo;. Rispose: &laquo;Chi sei, o Signore?. E la voce &laquo;Io
+        sono Gesù, che tu perseguiti! Orsù, alzati ed entra nella città e ti sarà detto ciò che devi
+        fare&raquo;.
+        </i>
+        <br><br>
+        A Damasco, Saulo ricevette il battesimo da un discepolo di nome Anania e cambiò nome in Paolo,
+        e iniziò a predicare in quella città finché, per sfuggire a chi voleva ucciderlo, fu fatto
+        uscire da alcuni discepoli che lo calarono di notte dalle mura. Da quel momento, godendo del
+        suo status di cittadino romano, Paolo si dedica alla diffusione del messaggio evangelico in
+        diverse città dell'impero, fondando numerose comunità cristiane a cui si rivolgeva nelle
+        sue lettere, osservando e rispondendo ai loro bisogni.
+        <br><br>
+        Secondo la tradizione, fu decapitato durante la persecuzione di Nerone, tra il 64 e il 67 d.C. 
+        `,
+        // San Giuseppe da Copertino
+        `Da bambino, Giuseppe era solito giocare al sacerdote, ed era arrivato a creare un piccolo
+        altare in un angolo della casa. A sette anni iniziò la scuola, ma fu costretto a lasciarla
+        a causa di una grave malattia durata quattro anni. A 15 anni avvenne la guarigione, che
+        lui attribuì alla Madonna delle Grazie. Negli anni di malattia aveva pensato di farsi
+        sacerdote francescano, ma questi lo rifiutarono perché non aveva la dovuta istruzione (non
+        sapeva nemmeno leggere o scrivere). Per tre anni stette presso i frati cappuccini, curando
+        il refettorio, e nel frattempo si mise d'impegno sui libri e riuscì a superare gli esami
+        per diventare diacono. La prova per diventare sacerdote era presieduta dal Vescovo di Castro,
+        che aveva la fama di essere molto esigente e severo negli esami. Il Vescovo interrogò per
+        primi alcuni diaconi preparatissimi e ne rimase così colpito che approvò tutti gli altri
+        diaconi senza verifiche, tra cui c'era Giuseppe.
+        <br><br>
+        A Giuseppe da Copertino sono attribuiti miracoli, estasi mistiche, e in particolare
+        levitazioni, per le quali fu processato dal Sant'Uffizio per abuso di credulità popolare,
+        da cui poi fu assolto. Infatti, quando le levitazioni o le estasi avvenivano durante
+        la Messa, i fedeli spesso si distraevano e arrivavano a fare esperimenti sulla sua
+        sensibilità (per esempio, pungerlo con gli spilli per vedere se fingeva). Per questo
+        motivo fu inviato in vari conventi di frati cappuccini, a vivere in isolamento.
+        <br><br>
+        Ora è patrono degli studenti per il modo in cui ha superato gli esami per accedere
+        al sacerdozio, nonostante lo studio da autodidatta e la scarsa preparazione culturale.
+        `,
+        // Santi Cosma e Damiano
+        `La tradizione fa riferimento a Cosma e Damiano come due fratelli, gemelli e medici.
+        Originari dell'Arabia e di ricca famiglia, dopo aver appreso l'arte medica nella
+        provincia romana della Siria, iniziarono a praticare la professione gratuitamente.
+        Una sola volta, secondo la tradizione, sono stati ricompensati: Damiano accettò
+        tre uova da parte di una contadina, Palladia, che aveva guarito miracolosamente, e
+        Cosma rimase così deluso che chiese di essere sepolto lontano dal fratello.
+        <br><br>
+        I due furono catturati durante le
+        <a href="https://it.wikipedia.org/wiki/Persecuzione_dei_cristiani_sotto_Diocleziano">persecuzioni di Diocleziano</a>,
+        e sono diverse le fonti che attestano il metodo con cui furono uccisi. In particolare,
+        si dice che:
+        <ul style="margin-left: 20px">
+            <li>Furono lapidati, ma le pietre rimbalzarono contro i soldati;</li>
+            <li>Furono fustigati, crocefissi e bersagliati da dardi, ma le lance non gli fecero del male;</li>
+            <li>Furono gettati in mare da un dirupo con il macigno appeso al collo, ma i legacci si sciolsero;</li>
+            <li>Furono incatenati e messi in una fornace, ma il fuoco non arrecava loro dolore;</li>
+            <li>Furono decapitati, e morirono.</li>
+        </ul>
+        Prese voce la leggenda che Damiano avesse accettato la ricompensa della donna mosso da
+        spirito di carità, per evitare che si sentisse umiliata dal rifiuto, e quindi i due furono
+        sepolti vicini.
+        `
     ];
-
-    // Informazioni dei tier
-    const tiers = [
-    { id: 's-tier', label: 'S', colorClass: 'tier-s', name: 'S' },
-    { id: 'a-tier', label: 'A', colorClass: 'tier-a', name: 'A' },
-    { id: 'b-tier', label: 'B', colorClass: 'tier-b', name: 'B' },
-    { id: 'c-tier', label: 'C', colorClass: 'tier-c', name: 'C' },
-    { id: 'd-tier', label: 'D', colorClass: 'tier-d', name: 'D' }
-    ];
-
 
     // Dataset immagini
     const imgPath = "images/";
@@ -29,6 +186,15 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 4, label: 'San Paolo', src: 'San-Paolo.jpg'},
         { id: 5, label: 'San Giuseppe da Copertino', src: 'Giuseppe-Copertino.jpeg'},
         { id: 6, label: 'Santi Cosma e Damiano', src: 'Cosma-Damiano.jpg'}
+    ];
+
+    // Informazioni dei tier
+    const tiers = [
+    { id: 's-tier', label: 'S', colorClass: 'tier-s', name: 'S' },
+    { id: 'a-tier', label: 'A', colorClass: 'tier-a', name: 'A' },
+    { id: 'b-tier', label: 'B', colorClass: 'tier-b', name: 'B' },
+    { id: 'c-tier', label: 'C', colorClass: 'tier-c', name: 'C' },
+    { id: 'd-tier', label: 'D', colorClass: 'tier-d', name: 'D' }
     ];
 
     // Inizializzazione
