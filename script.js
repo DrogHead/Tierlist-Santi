@@ -174,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
         Prese voce la leggenda che Damiano avesse accettato la ricompensa della donna mosso da
         spirito di carità, per evitare che si sentisse umiliata dal rifiuto, e quindi i due furono
         sepolti vicini.
+        <br><br>
+        Ora sono patroni delle professioni mediche, e del quartiere di Secondigliano (lol).
         `
     ];
 
