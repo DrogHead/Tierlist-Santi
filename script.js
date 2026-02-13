@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         si dice che:
         <ul style="margin-left: 20px">
             <li>Furono lapidati, ma le pietre rimbalzarono contro i soldati;</li>
-            <li>Furono fustigati, crocefissi e bersagliati da dardi, ma le lance non gli fecero del male;</li>
+            <li>Furono fustigati, crocefissi e bersagliati da dardi, ma le lance non fecero loro del male;</li>
             <li>Furono gettati in mare da un dirupo con il macigno appeso al collo, ma i legacci si sciolsero;</li>
             <li>Furono incatenati e messi in una fornace, ma il fuoco non arrecava loro dolore;</li>
             <li>Furono decapitati, e morirono.</li>
@@ -176,6 +176,80 @@ document.addEventListener('DOMContentLoaded', function() {
         sepolti vicini.
         <br><br>
         Ora sono patroni delle professioni mediche, e del quartiere di Secondigliano (lol).
+        `,
+        `
+        Bernadette visse la sua infanzia in estrema povertà a causa di una crisi che colpì
+        particolarmente gli agricoltori francesi: la sua casa consisteva in una sola piccola
+        stanza in cui viveva con tutta la famiglia, e contrasse l'asma a causa delle continue
+        inalazioni di aria malsana. Per contribuire a sostenere la famiglia lavorava pascolando
+        le greggi e facendo la cameriera presso una taverna.
+        <br><br>
+        Secondo quanto riferito da lei stessa, l'11 febbraio 1858, all'età di 14 anni, mentre
+        assieme alla sorella e a un'amica stava raccogliendo legna da ardere poco fuori Lourdes,
+        Bernadette ebbe la prima visione di "una piccola signora giovane", che descrive indossare
+        un velo bianco, una cinta blu, e teneva tra le mani un Rosario. Non avendo fatto il
+        catechismo, Bernadette non sapeva chi fosse questa signora, e gli abitanti della cittadina
+        erano divisi sulla convinzione che lei dicesse o no la verità. I contenuti delle altre visioni
+        testimoniate da Bernadette erano molto semplici, focalizzate sulla necessità di preghiera e
+        penitenza, ma dopo la tredicesima visione iniziarono a verificarsi anche fatto miracolosi come
+        la nascita di una sorgente d'acqua pulita, la guarigione di numerosi malati, e un'estasi mistica
+        di Bernadette stessa, che sarebbe rimasta a contatto diretto con la fiamma di un cero senza
+        riportare segni di ustioni o bruciature.
+        <br><br>
+        Berdadette ebbe un totale di diciotto visioni, che dopo attente analisi degli eventi miracolosi
+        e delle testimonianze dirette sono state riconosciute dalla Chiesa Cattolica come manifestazioni
+        della Beata Vergine Maria. Bernadette non aveva studiato, lei stessa si dichiarava "la più ignorante",
+        e mal sopportava tutto l'interesse che la vicenda stava richiamando su di sé. Per questo motivo
+        si trasferì presso una scuola-convitto tenuta dalle Suore della Carità di Nevers e, una volta
+        imparato a leggere e scrivere, si ritirò presso il loro convento. Morì all'età di 35 anni,
+        ma la sua tubercolosi le impedì di essere presente alla consacrazione della basilica di Lourdes.
+        <br><br>
+        Fu proclamata santa nel 1933 da Papa Pio XI non per essere stata oggetto delle apparizioni mariane,
+        ma per la semplicità con cui aveva vissuto la sua vita e la sua fede. Oggi è santa protettrice
+        degli ammalati, delle lavoratrici nei campi, e patrona di Lourdes.
+        `,
+        `
+        Giovanna nacque in una famiglila di contadini nella Lorena, in Francia. Le testimonianze del
+        tempo la descrivono come una ragazzina caritatevole, che spesso visitava i malati e offriva il
+        proprio letto ai senzatetto. All'età di 13 anni decise di consacrare la sua vita a Dio dopo aver
+        avuto visioni dell'arcangelo Michele, di Santa Caterina e di Santa Margherita, e decise di fare
+        voto di castità. La sua storia è legata a quella della guerra dei cent'anni: nell'estate del 1428
+        la sua famiglia fu costretta alla fuga dalle truppe di Borgogna, che stavano per occupare la città
+        di Orléans per il suo ruolo economico e strategico.
+        <br><br>
+        Come lei stessa dichiara, durante l'interrogatorio per il processo che la vedrà accusata di eresia,
+        Giovanna si sentì chiamata a prestare il suo aiuto a Carlo, Delfino di Francia, nella guida
+        dell'esercito, e decise di lasciare casa. I genitori, intuite le intenzioni della figlia, tentarono
+        di combinarle un matrimonio che lei rifiutò. Il suo fidanzato la citò in giudizio al tribunale
+        episcopale, che tuttavia diede ragione a Giovanna, dato che il fidanzamento era avvenuto senza il suo
+        consenso. La ragazza poté dunque dedicarsi alla sua missione: la sua prima tappa fu a Vaucouleurs dove
+        si incontrò con il capitano della piazzaforte. Al primo tentativo questi la schernì e le diede della
+        pazza, ma visto il consenso che Giovanna sapeva raccogliere tra il popolo e tra i soldati, si convinse
+        alla fine della sua buona fede e acconsentì che una scorta l'accompagnasse dal sovrano.
+        <br><br>
+        Durante l'incontro con Carlo, Giovanna fu messa alla prova in materia di fede da alcuni ecclesiastici e
+        successivamente da un gruppo di teologi, dopodiché le fu concesso di guidare l'esercito di Francia.
+        Giovanna iniziò una riforma dell'esercito, che seguendo il suo esempio smise di perpetrare violenze e
+        saccheggi ai danni dei villaggi conquistati e si riuniva due volte al giorno in preghiera. L'immediato
+        effetto fu quello di instaurare un rapporto di fiducia tra i soldati e la popolazione civile. Al comando
+        dell'esercito francese, Giovanna ignorava sia i suoi detrattori sia le lotte intestine alla nobiltà francese,
+        rimanendo vicina ai bisogni dei soldati semplici, stremati dalla fame che l'assedio stava causando a
+        Orléans. I suoi tentativi di dissuadere gli inglesi dal continuare l'assedio fallirono, ma l'8 maggio
+        1429 la città fu liberata dopo uno scontro diretto durato due ore, al termine delle quali l'esercito
+        inglese si ritirò e quello francese, guidato da Giovanna e Carlo, decise di non inseguirli. La campagna
+        proseguì con successo nel resto della regione, e permise all'esercito francese di avanzare fino a Reims,
+        dove Carlo fu finalmente consacrato re di Francia, consolidando il suo ruolo.
+        <br><br>
+        Subito dopo ebbe inizio il declino, perché il re non voleva proseguire la guerra e l'assedio di Parigi,
+        guidato da Giovanna, non ebbe i risultati sperati e si concluse in un fallimento. Non aiutò la successiva
+        cattura di Giovanna sotto le mura della città di Compiègne, da parte di Giovanni di Lussemburgo, che
+        la vendette agli inglesi per 10.000 scudi d'oro. Nessuno tentò di liberarla né di pagare il riscatto, e 
+        gli inglesi trovarono l'occasione per umiliarla e svalutarla agli occhi del popolo francese, e la 
+        consegnarono al Tribunale dell'Inquisizione, ostile a Giovanna, che la interrogò per l'accusa di eresia. 
+        Al termine del processo fu dichiarata colpevole di idolatria, scisma e apostasia, e per questo fu condannata
+        al rogo, dove morì nel 1431 dopo essersi confessata e comunicata. Nel 1455 il suo processo fu rivalutato e
+        Giovanna fu completamente assolta dalle accuse. Nel 1920 è stata proclamata santa da papa Pio X, e dal 1944
+        è patrona di Francia.
         `
     ];
 
@@ -187,7 +261,9 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 3, label: 'San Sebastiano', src: 'San-Sebastiano.jpg'},
         { id: 4, label: 'San Paolo', src: 'San-Paolo.jpg'},
         { id: 5, label: 'San Giuseppe da Copertino', src: 'Giuseppe-Copertino.jpeg'},
-        { id: 6, label: 'Santi Cosma e Damiano', src: 'Cosma-Damiano.jpg'}
+        { id: 6, label: 'Santi Cosma e Damiano', src: 'Cosma-Damiano.jpg'},
+        { id: 7, label: 'Santa Bernadette', src: 'Santa-Bernadette.jpg'},
+        { id: 8, label: 'Santa Giovanna d\'Arco', src: 'Giovanna-Darco.jpg'}
     ];
 
     // Informazioni dei tier
